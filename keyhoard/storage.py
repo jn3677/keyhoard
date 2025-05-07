@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from encryption import encrypt, decrypt
+from keyhoard.encryption import encrypt, decrypt
 
 HISTORY_FILE = Path("history.json")
 MAX_ENTRIES = 50
