@@ -1,10 +1,11 @@
 import time
 import getpass
-from clipboard import ClipboardMonitor
-from hotkeys import HotkeyManager
-from storage import ClipboardStorage
-from config import load_config
-from encryption import derive_key
+
+from keyhoard.clipboard import ClipboardMonitor
+from keyhoard.hotkeys import HotkeyManager
+from keyhoard.storage import ClipboardStorage
+from keyhoard.config import load_config
+from keyhoard.encryption import derive_key
 import base64
 
 def main():
@@ -19,7 +20,7 @@ def main():
     clipboard = ClipboardMonitor()
     storage = ClipboardStorage(key)
     print("Clipboard monitoring started...")
-    hotkey_mgr = HotkeyManager(storage)
+    hotkey_mgr = HotkeyManager(storage,clipboard)
 
     try:
         while True:

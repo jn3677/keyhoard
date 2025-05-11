@@ -2,7 +2,7 @@ import base64
 import json
 from configparser import ConfigParser
 from pathlib import Path
-from encryption import generate_salt
+from keyhoard.encryption import generate_salt
 
 CONFIG_FILE = Path("config.json")
 

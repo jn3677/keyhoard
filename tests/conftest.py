@@ -9,8 +9,8 @@ def test_key():
 
 @pytest.fixture
 def empty_storage(tmp_path, test_key):
-    storage_file = tmp_path
     return ClipboardStorage(key=test_key)
+
 
 @pytest.fixture
 def populated_storage(empty_storage):
@@ -23,3 +23,6 @@ def populated_storage(empty_storage):
 def clipboard_monitor():
     return ClipboardMonitor()
 
+@pytest.fixture
+def test_salt():
+    return b"test_salt_12345678"
