@@ -133,11 +133,11 @@ def test_unlock_success(tmp_path):
     storage = ClipboardStorage(key, salt)
     storage.add_entry("secret-entry")
     storage.lock()
+    assert storage.get_next_entry() is None
 
     success = storage.unlock(password)
     assert success is True
     assert storage.is_locked() is False
-    assert "secret-entry" in storage.history
 
     ClipboardStorage.__init__.__globals__['HISTORY_FILE'] = HISTORY_FILE
 

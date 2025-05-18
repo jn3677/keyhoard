@@ -3,10 +3,10 @@ import sys
 from typing import Callable
 
 import keyboard
-import pyperclip
 
 from keyhoard.clipboard import ClipboardMonitor
 from keyhoard.storage import ClipboardStorage
+from tests.conftest import clipboard_monitor
 
 
 class HotkeyManager:
@@ -14,6 +14,7 @@ class HotkeyManager:
     def __init__(self, storage: ClipboardStorage , clipboard: ClipboardMonitor):
         self.storage = storage
         self.clipboard = clipboard
+        self.current_preview: str| None = None
         self.forward_hotkey = 'right'
         self.backward_hotkey = 'left'
         self.lock_hotkey = 'ctrl+shift+l'
@@ -21,6 +22,7 @@ class HotkeyManager:
         self.show_history_hotkey =  'ctrl+shift+h'
         self.clear_history_hotkey = 'ctrl+shift+c'
         self.quit_hotkey = 'ctrl+shift+q'
+        self.select_hotkey = 'enter'
         self.hotkey_handlers = {}
         self.register_defaults()
 
@@ -32,14 +34,20 @@ class HotkeyManager:
         self.register_hotkey(self.show_history_hotkey, self.show_history)
         self.register_hotkey(self.clear_history_hotkey, self.clear_history)
         self.register_hotkey(self.quit_hotkey, self.quit_program)
+        self.register_hotkey(self.select_hotkey, self.confirm_selection)
         print(f'Hotkeys registered')
+
+    def confirm_selection(self):
+        if self.current_preview:
+            self.clipboard.write_to_clipboard(self.current_preview)
+            print(f"Copied {self.current_preview}")
 
     def cycle_forward(self)->bool:
         try:
             if next_item:= self.storage.get_next_entry():
                 with self.suppress_monitoring():
                     print(f"Cycle forward next {next_item}")
-                    pyperclip.copy(next_item)
+                    self.current_preview = next_item
                 return True
         except Exception as e:
             print(f"Cycle error: {str(e)}")
@@ -49,12 +57,13 @@ class HotkeyManager:
         if next_item:= self.storage.get_previous_entry():
             with self.suppress_monitoring():
                 print(f"Cycle backward next {next_item}")
-                pyperclip.copy(next_item)
+                self.current_preview = next_item
             return True
         return False
 
     def lock_clipboard(self):
         self.storage.lock()
+        print("Locked")
 
     def unlock_clipboard(self):
         password = input("Enter to unlock password:")
@@ -69,7 +78,8 @@ class HotkeyManager:
             print("Clipboard locked, unable to view history")
             return
         if not self.storage.history:
-            print("   (empty")
+            print("   (empty)")
+        print('/n')
         for i, item in enumerate(self.storage.history, 1):
             preview = item.replace('\n', ' ')[:60]
             if len(item) > 60:

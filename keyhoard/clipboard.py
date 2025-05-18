@@ -24,6 +24,9 @@ class ClipboardMonitor:
             return text
         return None
 
+    def write_to_clipboard(self, text):
+        pyperclip.copy(text)
+
     @contextlib.contextmanager
     def suppress(self):
         self.suppressed = True

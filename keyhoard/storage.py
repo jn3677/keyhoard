@@ -47,6 +47,9 @@ class ClipboardStorage:
         if self.locked:
             print("Can not add entry while clipboard is locked.")
             return None
+        self.add_to_history(text)
+
+    def add_to_history(self, text):
         if text in self.history:
             self.history.remove(text) # Remove duplicates
         self.history.insert(0, text)
@@ -56,19 +59,17 @@ class ClipboardStorage:
 
 
     def lock(self):
-        self.history = []
-        self.current_index = -1
         self.locked = True
         print("Clipboard locked")
 
     def unlock(self, password):
         try:
-            key = derive_key(password, self.salt)
-            self.key = key
-            self.history = self.load_history()
-            self.locked = False
-            print("Clipboard unlocked.")
-            return True
+            key_attempt = derive_key(password, self.salt)
+            if key_attempt == self.key:
+                self.locked = False
+                print("Clipboard unlocked.")
+                return True
+            return False
         except Exception as e:
             print(f"Unlock failed {e}")
             return False
