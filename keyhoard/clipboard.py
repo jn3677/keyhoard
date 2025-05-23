@@ -13,7 +13,7 @@ class ClipboardMonitor:
     def get_clipboard(self):
         try:
             return pyperclip.paste()
-        except Exception:
+        except Exception as e:
             print(f"[Clipboard Error]: {e}")
             return None
 
