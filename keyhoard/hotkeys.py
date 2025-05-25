@@ -6,7 +6,6 @@ import keyboard
 
 from keyhoard.clipboard import ClipboardMonitor
 from keyhoard.storage import ClipboardStorage
-from tests.conftest import clipboard_monitor
 
 
 class HotkeyManager:

@@ -2,6 +2,7 @@ import pytest
 from keyhoard.encryption import derive_key
 from keyhoard.storage import ClipboardStorage
 from keyhoard.clipboard import ClipboardMonitor
+from unittest.mock import patch, MagicMock
 
 @pytest.fixture
 def test_key():
@@ -26,3 +27,9 @@ def clipboard_monitor():
 @pytest.fixture
 def test_salt():
     return b"test_salt_12345678"
+
+
+@pytest.fixture(autouse=True)
+def mock_pyperclip():
+    with patch("pyperclip.copy") as mock_copy, patch("pyperclip.paste", return_value="mocked text") as mock_paste:
+        yield mock_copy, mock_paste
